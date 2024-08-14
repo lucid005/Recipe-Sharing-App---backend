@@ -1,7 +1,8 @@
 const recipeModel = require("../model/recipe.model");
 
 const createRecipe = async (req, res) => {
-  const { title, description, image, ingridents, instructions, chef } = req.body;
+  const { title, description, ingridents, instructions, chef } = req.body;
+  const image = req.file.path;
 
   try {
     const newRecipe = await recipeModel.create({
