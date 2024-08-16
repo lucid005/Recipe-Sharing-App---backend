@@ -12,12 +12,12 @@ const recipeSchema = new mongoose.Schema(
       required: [true, "Recipe overview is required"],
     },
 
-    image: {
+    recipeImage: {
       type: String,
       required: [true, "Recipe image is required"],
     },
 
-    ingridents: [
+    ingredients: [
       {
         type: String,
         required: [true, "Recipe ingridents are required"],

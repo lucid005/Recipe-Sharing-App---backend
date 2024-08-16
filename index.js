@@ -2,14 +2,14 @@ require("dotenv").config();
 const connectDB = require("./config/database");
 const express = require("express");
 const app = express();
-const recipeRoutes = require("./routes/recipe.route");
-app.use(express.json());
+const recipeRoutes = require("./routes/recipe.routes");
 const cors = require("cors");
 
 const corsOption = {
   origin: "http://localhost:5173",
 }
 
+app.use(express.json());
 app.use(cors(corsOption));
 app.use("/", recipeRoutes);
 

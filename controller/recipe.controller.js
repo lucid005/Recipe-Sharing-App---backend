@@ -1,21 +1,40 @@
 const recipeModel = require("../model/recipe.model");
+const uploadOnCloudinary = require("../utils/cloudinary.utils");
+const fs = require("fs");
+const path = require("path");
 
 const createRecipe = async (req, res) => {
-  const { title, description, ingridents, instructions, chef } = req.body;
-  const image = req.file.path;
+  const { title, description, ingredients, instructions, chef } = req.body;
+  console.log(req.file);
 
   try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Image is required",
+      });
+    }
+
+    const cloudinaryResult = await uploadOnCloudinary(req.file.path, "recipe");
+
+    if (!cloudinaryResult) {
+      return res.status(500).json({
+        success: false,
+        message: "Image upload failed",
+      });
+    }
+
     const newRecipe = await recipeModel.create({
       title,
       description,
-      image,
-      ingridents,
-      instructions,
+      recipeImage: cloudinaryResult.secure_url, 
+      ingredients, 
+      instructions, 
       chef,
     });
-    await newRecipe.save();
+
     res.status(201).json({
-      sucess: true,
+      success: true,
       message: "Recipe created successfully",
       newRecipe,
     });
@@ -46,7 +65,7 @@ const getAllRecipe = async (req, res) => {
   }
 };
 
-module.exports = { 
-    createRecipe, 
-    getAllRecipe 
+module.exports = {
+  createRecipe,
+  getAllRecipe,
 };
