@@ -65,6 +65,10 @@ const getAllRecipe = async (req, res) => {
   }
 };
 
+const getRecipeByID = async (req, res) => {
+  const { id } = req.params;
+}
+
 module.exports = {
   createRecipe,
   getAllRecipe,

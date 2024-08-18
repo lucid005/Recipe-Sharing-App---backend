@@ -2,7 +2,7 @@ require("dotenv").config();
 const connectDB = require("./config/database");
 const express = require("express");
 const app = express();
-const recipeRoutes = require("./routes/recipe.routes");
+const mainRoutes = require("./routes/index.routes");
 const cors = require("cors");
 
 const corsOption = {
@@ -11,7 +11,7 @@ const corsOption = {
 
 app.use(express.json());
 app.use(cors(corsOption));
-app.use("/", recipeRoutes);
+app.use("/", mainRoutes);
 
 const PORT = process.env.PORT || 3000;
 const startServer = async () => {
