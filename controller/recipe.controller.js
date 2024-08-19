@@ -65,11 +65,109 @@ const getAllRecipe = async (req, res) => {
   }
 };
 
-const getRecipeByID = async (req, res) => {
-  const { id } = req.params;
+const getRecipeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const recipe = await recipeModel.findById(id);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: recipe,
+      recipe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+    console.log(error);
+  }
+}
+
+const updateRecipe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, ingredients, instructions, chef } = req.body;
+
+    const updatedFields = {
+      title,
+      description,
+      ingredients,
+      instructions,
+      chef,
+    };
+    
+    if (req.file) {
+      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "recipe");
+      if(!cloudinaryResult) {
+        updatedFields.recipeImage = cloudinaryResult.secure_url;
+      } else{
+        return res.status(500).json({
+          success: false,
+          message: "Image upload failed",
+        });
+      }
+    }
+
+    const recipe = await recipeModel.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Recipe updated successfully",
+      recipe,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+const deleteRecipe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const recipe = await recipeModel.findByIdAndDelete(id);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Recipe deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
 module.exports = {
   createRecipe,
   getAllRecipe,
+  getRecipeById,
+  updateRecipe,
+  deleteRecipe,
 };
