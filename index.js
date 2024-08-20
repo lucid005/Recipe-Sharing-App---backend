@@ -6,8 +6,9 @@ const mainRoutes = require("./routes/index.routes");
 const cors = require("cors");
 
 const corsOption = {
-  origin: "http://localhost:5173",
-}
+  origin: ["http://localhost:5173", "http://localhost:3000"],
+  methods: "GET, POST, PUT, DELETE",
+};
 
 app.use(express.json());
 app.use(cors(corsOption));
