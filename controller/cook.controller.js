@@ -1,40 +1,40 @@
-const userModel = require("../model/user.model");
+const cookModel = require("../model/cook.model");
 const bcrypt = require("bcrypt");
 
-const createUser = async (req, res) => {
-  const { fullname, email, password } = req.body;
+const createCook = async (req, res) => {
+  const { fullname, gender, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userModel.create({
+    const newCook = await cookModel.create({
       fullname,
+      gender,
       email,
       password: hashedPassword,
     });
-    await newUser.save();
+    await newCook.save();
 
     res.status(200).json({
       success: true,
-      message: "User created successfully",
-      newUser,
+      message: "Cook created successfully",
+      newCook,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
     });
-    console.log(error);
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllCook = async (req, res) => {
   try {
-    const users = await userModel.find();
+    const cook = await cookModel.find();
     res.status(200).json({
       success: true,
-      message: users,
-      totalCount: users.length,
-      users,
+      message: cook,
+      totalCount: cook.length,
+      cook,
     });
   } catch (error) {
     res.status(500).json({
@@ -44,20 +44,20 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
+const getCookById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findById(id);
-    if (!user) {
+    const cook = await cookModel.findById(id);
+    if (!cook) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Cook not found",
       });
     }
     res.status(200).json({
       success: true,
-      message: user,
-      user,
+      message: cook,
+      cook,
     });
   } catch (error) {
     res.status(500).json({
@@ -67,33 +67,33 @@ const getUserById = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+const updateCook = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullname, email, password } = req.body;
-    const updatedFields = { fullname, email };
+    const { fullname, gender, email, password } = req.body;
+    const updatedFields = { fullname, gender, email };
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updatedFields.password = hashedPassword;
     }
 
-    const user = await userModel.findByIdAndUpdate(id, updatedFields, {
+    const cook = await cookModel.findByIdAndUpdate(id, updatedFields, {
       new: true,
       runValidators: true,
     });
 
-    if (!user) {
+    if (!cook) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Cook not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "User updated successfully",
-      user,
+      message: "Cook updated successfully",
+      cook,
     });
   } catch (error) {
     res.status(500).json({
@@ -103,22 +103,22 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
+const deleteCook = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userModel.findByIdAndDelete(id);
+    const cook = await cookModel.findByIdAndDelete(id);
 
-    if (!user) {
+    if (!cook) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Cook not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "User deleted successfully",
-      user,
+      message: "Cook deleted successfully",
+      cook,
     });
   } catch (error) {
     res.status(500).json({
@@ -129,9 +129,9 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  createUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
+  createCook,
+  getAllCook,
+  getCookById,
+  updateCook,
+  deleteCook,
 };
