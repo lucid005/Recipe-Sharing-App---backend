@@ -12,7 +12,7 @@ const cookSchema = new mongoose.Schema({
   },
 
   phone: {
-    type: String,
+    type: Number,
     required: [true, "Phone number is required"],
   },
 
