@@ -2,13 +2,14 @@ const cookModel = require("../model/cook.model");
 const bcrypt = require("bcrypt");
 
 const createCook = async (req, res) => {
-  const { fullname, gender, email, password } = req.body;
+  const { fullname, gender, phone, email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newCook = await cookModel.create({
       fullname,
       gender,
+      phone,
       email,
       password: hashedPassword,
     });
@@ -70,8 +71,8 @@ const getCookById = async (req, res) => {
 const updateCook = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullname, gender, email, password } = req.body;
-    const updatedFields = { fullname, gender, email };
+    const { fullname, gender, phone, email, password } = req.body;
+    const updatedFields = { fullname, gender, phone, email };
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);

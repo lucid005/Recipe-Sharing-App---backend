@@ -11,6 +11,11 @@ const cookSchema = new mongoose.Schema({
     required: [true, "Gender is required"],
   },
 
+  phone: {
+    type: String,
+    required: [true, "Phone number is required"],
+  },
+
   email: {
     type: String,
     required: [true, "Email is required"],
