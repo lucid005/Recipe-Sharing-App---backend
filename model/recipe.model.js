@@ -30,10 +30,15 @@ const recipeSchema = new mongoose.Schema(
         required: [true, "Recipe instructions are required"],
       },
     ],
+    tags: [
+      {
+        type: String,
+        required: [true, "Recipe tags are required"],
+      },
+    ],
     chef: {
       type: String,
-      required: [true, "Recipe chief is required"],
-    },
+    }
   },
   {
     timestamps: true,

@@ -1,10 +1,8 @@
 const recipeModel = require("../model/recipe.model");
 const uploadOnCloudinary = require("../utils/cloudinary.utils");
-const fs = require("fs");
-const path = require("path");
 
 const createRecipe = async (req, res) => {
-  const { title, description, ingredients, instructions, chef } = req.body;
+  const { title, description, ingredients, instructions, tags, chef } = req.body;
   console.log(req.file);
 
   try {
@@ -30,6 +28,7 @@ const createRecipe = async (req, res) => {
       recipeImage: cloudinaryResult.secure_url, 
       ingredients, 
       instructions, 
+      tags,
       chef,
     });
 
@@ -92,13 +91,14 @@ const getRecipeById = async (req, res) => {
 const updateRecipe = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, ingredients, instructions, chef } = req.body;
+    const { title, description, ingredients, instructions, tags, chef } = req.body;
 
     const updatedFields = {
       title,
       description,
       ingredients,
       instructions,
+      tags,
       chef,
     };
     
