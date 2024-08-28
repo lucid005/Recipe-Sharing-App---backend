@@ -2,8 +2,15 @@ const recipeModel = require("../model/recipe.model");
 const uploadOnCloudinary = require("../utils/cloudinary.utils");
 
 const createRecipe = async (req, res) => {
-  const { title, description, ingredients, instructions, tags, chef } = req.body;
-  console.log(req.file);
+  const { title, description, ingredients, instructions, category } = req.body;
+  const chefName = req.user?.name;
+
+  if (!chefName) {
+    return res.status(400).json({
+      success: false,
+      message: "Chef name is required",
+    });
+  }
 
   try {
     if (!req.file) {
@@ -25,11 +32,11 @@ const createRecipe = async (req, res) => {
     const newRecipe = await recipeModel.create({
       title,
       description,
-      recipeImage: cloudinaryResult.secure_url, 
-      ingredients, 
-      instructions, 
-      tags,
-      chef,
+      recipeImage: cloudinaryResult.secure_url,
+      ingredients: JSON.parse(ingredients),
+      instructions: JSON.parse(instructions),
+      category: JSON.parse(category),
+      chef: chefName,
     });
 
     res.status(201).json({
@@ -86,27 +93,31 @@ const getRecipeById = async (req, res) => {
     });
     console.log(error);
   }
-}
+};
 
 const updateRecipe = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, ingredients, instructions, tags, chef } = req.body;
+    const { title, description, ingredients, instructions, category, chef } =
+      req.body;
 
     const updatedFields = {
       title,
       description,
-      ingredients,
-      instructions,
-      tags,
+      ingredients: JSON.parse(ingredients),
+      instructions: JSON.parse(instructions),
+      category: JSON.parse(category),
       chef,
     };
-    
+
     if (req.file) {
-      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "recipe");
-      if(!cloudinaryResult) {
+      const cloudinaryResult = await uploadOnCloudinary(
+        req.file.path,
+        "recipe"
+      );
+      if (!cloudinaryResult) {
         updatedFields.recipeImage = cloudinaryResult.secure_url;
-      } else{
+      } else {
         return res.status(500).json({
           success: false,
           message: "Image upload failed",
@@ -131,14 +142,13 @@ const updateRecipe = async (req, res) => {
       message: "Recipe updated successfully",
       recipe,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
-}
+};
 
 const deleteRecipe = async (req, res) => {
   try {
@@ -155,14 +165,13 @@ const deleteRecipe = async (req, res) => {
       success: true,
       message: "Recipe deleted successfully",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
-}
+};
 
 module.exports = {
   createRecipe,

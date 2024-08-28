@@ -18,7 +18,7 @@ const logInUser = async (req, res) => {
       }
 
       const token = jwt.sign(
-        { id: user._id, email: user.email, role: 'admin' },
+        { id: user._id, email: user.email, name: user.fullname, role: 'admin' },
         process.env.JWT_SECRET,
         {
           expiresIn: "1h",
@@ -42,7 +42,7 @@ const logInUser = async (req, res) => {
       }
 
       const token = jwt.sign(
-        { id: user._id, email: user.email, role: 'cook' },
+        { id: user._id, email: user.email, name: user.fullname, role: 'cook' },
         process.env.JWT_SECRET,
         {
           expiresIn: "1h",
@@ -65,7 +65,7 @@ const logInUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: 'user' },
+      { id: user._id, email: user.email, name: user.fullname, role: 'user' },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
