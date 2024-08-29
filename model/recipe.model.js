@@ -35,7 +35,7 @@
         cuisine: {
           type: String,
           required: [ true, "Cuisine is required" ],
-          enum: ["Nepalese", "American", "Indian", "Italian", "Japanese", "Chinese", "Others"],
+          enum: ["Nepalese", "American", "Indian", "Italian", "Japanese", "Mexican", "Chinese", "Others"],
         },
         meal: {
           type: String,
