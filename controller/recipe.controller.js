@@ -71,6 +71,33 @@ const getAllRecipe = async (req, res) => {
   }
 };
 
+const filterRecipes = async (req, res) => {
+  console.log("Query params:", req.query);
+
+  const { mealType, cuisineType } = req.query;
+
+  const filter = {};
+  if (mealType) filter["category.meal"] = mealType;
+  if (cuisineType) filter["category.cuisineType"] = cuisineType;
+  console.log("Filter:", filter);
+
+  try {
+    const recipes = await recipeModel.find(filter);
+    res.status(200).json({
+      sucess: true,
+      message: recipes,
+      totalCount: recipes.length,
+      recipes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error,
+    });
+    console.log(error);
+  }
+};
+
 const getRecipeById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -175,6 +202,7 @@ const deleteRecipe = async (req, res) => {
 
 module.exports = {
   createRecipe,
+  filterRecipes,
   getAllRecipe,
   getRecipeById,
   updateRecipe,
