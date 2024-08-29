@@ -78,7 +78,7 @@ const filterRecipes = async (req, res) => {
 
   const filter = {};
   if (mealType) filter["category.meal"] = mealType;
-  if (cuisineType) filter["category.cuisineType"] = cuisineType;
+  if (cuisineType) filter["category.cuisine"] = cuisineType;
   console.log("Filter:", filter);
 
   try {
