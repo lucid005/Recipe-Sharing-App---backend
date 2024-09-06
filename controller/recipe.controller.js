@@ -71,6 +71,28 @@ const getAllRecipe = async (req, res) => {
   }
 };
 
+const getRecipeByCook = async (req, res) => {
+  const { chef } = req.query;
+  const filterCook = {};
+  if (chef) filterCook["chef"] = chef;
+  
+  try {
+    const recipe = await recipeModel.find(filterCook);
+    res.status(200).json({
+      success: true,
+      message: recipe,
+      totalCount: recipe.length,
+      recipe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+    console.log(error);
+  }
+}
+
 const filterRecipes = async (req, res) => {
   console.log("Query params:", req.query);
 
@@ -203,6 +225,7 @@ const deleteRecipe = async (req, res) => {
 module.exports = {
   createRecipe,
   filterRecipes,
+  getRecipeByCook,
   getAllRecipe,
   getRecipeById,
   updateRecipe,
