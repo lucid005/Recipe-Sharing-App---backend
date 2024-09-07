@@ -75,7 +75,7 @@ const getRecipeByCook = async (req, res) => {
   const { chef } = req.query;
   const filterCook = {};
   if (chef) filterCook["chef"] = chef;
-  
+
   try {
     const recipe = await recipeModel.find(filterCook);
     res.status(200).json({
@@ -91,7 +91,7 @@ const getRecipeByCook = async (req, res) => {
     });
     console.log(error);
   }
-}
+};
 
 const filterRecipes = async (req, res) => {
   console.log("Query params:", req.query);

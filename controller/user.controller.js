@@ -1,5 +1,6 @@
 const userModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
+const uploadOnCloudinary = require("../utils/cloudinary.utils");
 
 const createUser = async (req, res) => {
   const { fullname, email, password } = req.body;
@@ -10,6 +11,7 @@ const createUser = async (req, res) => {
       fullname,
       email,
       password: hashedPassword,
+      userImage: `https://avatar.iran.liara.run/username?username=${fullname}`,
     });
     await newUser.save();
 
@@ -72,6 +74,18 @@ const updateUser = async (req, res) => {
     const { id } = req.params;
     const { fullname, email, password } = req.body;
     const updatedFields = { fullname, email };
+
+    if (req.file) {
+      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "user");
+      if (cloudinaryResult) {
+        updatedFields.userImage = cloudinaryResult.secure_url;
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Image upload failed",
+        });
+      }
+    }
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
