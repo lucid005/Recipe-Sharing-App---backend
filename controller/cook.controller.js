@@ -1,5 +1,6 @@
 const cookModel = require("../model/cook.model");
 const bcrypt = require("bcrypt");
+const uploadOnCloudinary = require("../utils/cloudinary.utils");
 
 const createCook = async (req, res) => {
   const { fullname, gender, phone, email, password } = req.body;
@@ -12,6 +13,7 @@ const createCook = async (req, res) => {
       phone,
       email,
       password: hashedPassword,
+      cookImage: `https://avatar.iran.liara.run/username?username=${fullname}`
     });
     await newCook.save();
 
@@ -73,6 +75,18 @@ const updateCook = async (req, res) => {
     const { id } = req.params;
     const { fullname, gender, phone, email, password } = req.body;
     const updatedFields = { fullname, gender, phone, email };
+
+    if (req.file) {
+      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "cook");
+      if (cloudinaryResult) {
+        updatedFields.cookImage = cloudinaryResult.secure_url;
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload image",
+        });
+      }
+    }
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);

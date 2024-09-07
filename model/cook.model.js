@@ -27,6 +27,11 @@ const cookSchema = new mongoose.Schema({
     required: [true, "Password is required"],
   },
 
+  cookImage: {
+    type: String,
+    default: "",
+  },
+
   role: {
     type: String,
     enum: ["cook"],
