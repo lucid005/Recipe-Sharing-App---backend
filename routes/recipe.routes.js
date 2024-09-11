@@ -9,7 +9,7 @@ router.get('/allRecipes/filter', filterRecipes);
 router.get('/allRecipes/filterCook', getRecipeByCook);
 router.get('/allRecipes/:id', getRecipeById );
 router.post("/addRecipe", authenticate, upload.single('recipeImage'), createRecipe);
-router.put('/updateRecipe/:id', authenticate, upload.single('recipeImage'), updateRecipe);
+router.patch('/updateRecipe/:id', upload.single('recipeImage'), updateRecipe);
 router.delete('/deleteRecipe/:id', authenticate, deleteRecipe);
  
 module.exports = router;

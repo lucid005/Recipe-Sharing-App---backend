@@ -5,8 +5,8 @@ const upload = require('../middleware/multer.middleware');
 
 router.get('/getCook', getAllCook);
 router.get('/getCook/:id', getCookById);
-router.post('/cookRegister', upload.single('cookImage'), createCook);
-router.put('/updateCook/:id', updateCook);
+router.post('/cookRegister', createCook);
+router.patch('/updateCook/:id', upload.single('profileImage'), updateCook);
 router.delete('/deleteCook/:id', deleteCook);
 
 module.exports = router;

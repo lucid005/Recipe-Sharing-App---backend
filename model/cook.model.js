@@ -27,7 +27,7 @@ const cookSchema = new mongoose.Schema({
     required: [true, "Password is required"],
   },
 
-  cookImage: {
+  profileImage: {
     type: String,
     default: "",
   },

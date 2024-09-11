@@ -20,7 +20,7 @@ const createRecipe = async (req, res) => {
       });
     }
 
-    const cloudinaryResult = await uploadOnCloudinary(req.file.path, "recipe");
+    const cloudinaryResult = await uploadOnCloudinary(req.file?.path);
 
     if (!cloudinaryResult) {
       return res.status(500).json({
@@ -147,37 +147,30 @@ const getRecipeById = async (req, res) => {
 const updateRecipe = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, ingredients, instructions, category, chef } =
-      req.body;
 
-    const updatedFields = {
-      title,
-      description,
-      ingredients: JSON.parse(ingredients),
-      instructions: JSON.parse(instructions),
-      category: JSON.parse(category),
-      chef,
-    };
+    let recipeImage;
 
     if (req.file) {
-      const cloudinaryResult = await uploadOnCloudinary(
-        req.file.path,
-        "recipe"
-      );
+      const cloudinaryResult = await uploadOnCloudinary(req.file?.path); 
+
       if (!cloudinaryResult) {
-        updatedFields.recipeImage = cloudinaryResult.secure_url;
-      } else {
         return res.status(500).json({
           success: false,
           message: "Image upload failed",
         });
       }
+
+      recipeImage = cloudinaryResult.secure_url;
     }
 
-    const recipe = await recipeModel.findByIdAndUpdate(id, updatedFields, {
-      new: true,
-      runValidators: true,
-    });
+    const recipe = await recipeModel.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        ...(recipeImage && { recipeImage }), 
+      },
+      { new: true }
+    );
 
     if (!recipe) {
       return res.status(404).json({
