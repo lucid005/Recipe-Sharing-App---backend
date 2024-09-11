@@ -13,7 +13,7 @@ const createCook = async (req, res) => {
       phone,
       email,
       password: hashedPassword,
-      cookImage: `https://avatar.iran.liara.run/username?username=${fullname}`
+      profileImage: `https://avatar.iran.liara.run/username?username=${fullname}`,
     });
     await newCook.save();
 
@@ -73,30 +73,32 @@ const getCookById = async (req, res) => {
 const updateCook = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullname, gender, phone, email, password } = req.body;
-    const updatedFields = { fullname, gender, phone, email };
+    let profileImage;
 
     if (req.file) {
-      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "cook");
-      if (cloudinaryResult) {
-        updatedFields.cookImage = cloudinaryResult.secure_url;
-      } else {
+      const cloudinaryResult = await uploadOnCloudinary(req.file?.path);
+
+      if (!cloudinaryResult) {
         return res.status(500).json({
           success: false,
-          message: "Failed to upload image",
+          message: "Image upload failed",
         });
       }
+
+      profileImage = cloudinaryResult.secure_url;
     }
 
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      updatedFields.password = hashedPassword;
-    }
-
-    const cook = await cookModel.findByIdAndUpdate(id, updatedFields, {
-      new: true,
-      runValidators: true,
-    });
+    const cook = await cookModel.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        ...(profileImage && { profileImage }),
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!cook) {
       return res.status(404).json({

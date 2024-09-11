@@ -11,7 +11,7 @@ const createUser = async (req, res) => {
       fullname,
       email,
       password: hashedPassword,
-      userImage: `https://avatar.iran.liara.run/username?username=${fullname}`,
+      profileImage: `https://avatar.iran.liara.run/username?username=${fullname}`,
     });
     await newUser.save();
 
@@ -72,30 +72,29 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { fullname, email, password } = req.body;
-    const updatedFields = { fullname, email };
+    let profileImage;
 
     if (req.file) {
-      const cloudinaryResult = await uploadOnCloudinary(req.file.path, "user");
-      if (cloudinaryResult) {
-        updatedFields.userImage = cloudinaryResult.secure_url;
-      } else {
+      const cloudinaryResult = await uploadOnCloudinary(req.file?.path);
+
+      if(!cloudinaryResult) {
         return res.status(500).json({
           success: false,
           message: "Image upload failed",
         });
       }
+
+      profileImage = cloudinaryResult.secure_url;
     }
 
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      updatedFields.password = hashedPassword;
-    }
-
-    const user = await userModel.findByIdAndUpdate(id, updatedFields, {
-      new: true,
-      runValidators: true,
-    });
+    const user = await userModel.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        ...(profileImage && { profileImage }),
+      },
+      { new: true }
+    )
 
     if (!user) {
       return res.status(404).json({
